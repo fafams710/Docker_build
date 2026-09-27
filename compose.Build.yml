@@ -1,0 +1,29 @@
+name: Build
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_NAME: events
+      DB_USER: events
+      DB_PASSWORD: Rene-Bituin-ng-Mindanao
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: events
+      POSTGRES_USER: events
+      POSTGRES_PASSWORD: Rene-Bituin-ng-Mindanao
+    volumes:
+      - db_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U events -d events"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+volumes:
+  db_data:
